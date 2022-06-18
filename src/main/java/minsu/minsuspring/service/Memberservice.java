@@ -3,13 +3,20 @@ package minsu.minsuspring.service;
 import minsu.minsuspring.domain.Member;
 import minsu.minsuspring.repository.MemberRepository;
 import minsu.minsuspring.repository.MemoryMemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+
 public class Memberservice {
-    
-    private final MemberRepository memberRepository = new MemoryMemberRepository();
+
+    private final MemberRepository memberRepository;
+
+    public Memberservice(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
     
     public  Long join(Member member){
         //중복회원 방지
