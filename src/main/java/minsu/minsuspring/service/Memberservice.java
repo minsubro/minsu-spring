@@ -4,12 +4,14 @@ import minsu.minsuspring.domain.Member;
 import minsu.minsuspring.repository.MemberRepository;
 import minsu.minsuspring.repository.MemoryMemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.metadata.HsqlTableMetaDataProvider;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-
+@Transactional
 public class Memberservice {
 
     private final MemberRepository memberRepository;
@@ -19,10 +21,18 @@ public class Memberservice {
     }
     
     public  Long join(Member member){
+
+        long start = System.currentTimeMillis();
         //중복회원 방지
-        validateDuplicateMember(member);
-        memberRepository.save(member);
-        return member.getId();
+        try {
+            validateDuplicateMember(member);
+            memberRepository.save(member);
+            return member.getId();
+        } finally {
+            long finish = System.currentTimeMillis();
+            long time = finish - start;
+            System.out.println("join = " + time + "ms");
+        }
     }
 
     private void validateDuplicateMember(Member member) {
@@ -33,10 +43,18 @@ public class Memberservice {
     }
 
     public List<Member> findMembers(){
-        return memberRepository.findAll();
+        long start = System.currentTimeMillis();
+        try {
+            return memberRepository.findAll();
+        } finally {
+            long finish = System.currentTimeMillis();
+            long time = finish - start;
+            System.out.println("findMembers " + time + "ms");
+        }
     }
 
     public Optional<Member> findOne(Long memberId){
+
         return memberRepository.findById(memberId);
     }
 }
